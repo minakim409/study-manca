@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 @Table(name = "members")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Member extends BaseEntity {
 
     @Id
@@ -24,11 +26,4 @@ public class Member extends BaseEntity {
 
     @Column
     private String phone;
-
-    @Builder
-    public Member(String name, String email, String phone) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-    }
 }
