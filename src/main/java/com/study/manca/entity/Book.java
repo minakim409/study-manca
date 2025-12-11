@@ -33,7 +33,7 @@ public class Book extends BaseEntity {
     private String publisher;  // 출판사
 
     @Column(nullable = false)
-    private Integer volume;  // 권수
+    private Integer volume;  // 권수, wrapper class 는 null 될 수 있음
 
     @Column(nullable = false, length = 50)
     private String genre;  // 장르 (예: 액션, 로맨스, SF, 판타지)
