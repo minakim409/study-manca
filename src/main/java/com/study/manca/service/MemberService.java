@@ -32,6 +32,11 @@ public class MemberService {
         return MemberResponse.from(member);
     }
 
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with email: " + email));
+    }
+
     // 사용자 생성 (POST)
     @Transactional
     public MemberResponse create(MemberRequest request) {

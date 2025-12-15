@@ -1,9 +1,6 @@
 package com.study.manca.controller;
 
-import com.study.manca.dto.BookRequest;
-import com.study.manca.dto.BookResponse;
-import com.study.manca.dto.BookUpdateRequest;
-import com.study.manca.service.BookService;
+import com.study.manca.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,36 +12,41 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Book", description = "Book API")
+@Tag(name = "Rental", description = "Rental API")
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/api/rentals")
 @RequiredArgsConstructor
-public class BookController {
+public class RentalController {
 
-    private final BookService bookService;
+    private final RentalService rentalService;
+
+
 
     // 설계
-    @Operation(summary = "전체 책 조회")
-    @ApiResponse(responseCode = "200", description = "조회 성공")
-    @GetMapping
-    public ResponseEntity<List<BookResponse>> getAllBooks() {
-        List<BookResponse> books = bookService.findAll();
-        return ResponseEntity.ok(books);
-    }
+//    @Operation(summary = "전체 책 조회")
+//    @ApiResponse(responseCode = "200", description = "조회 성공")
+//    @GetMapping
+//    public ResponseEntity<List<BookResponse>> getAllBooks() {
+//        List<BookResponse> books = rentalService.findAll();
+//        return ResponseEntity.ok(books);
+//    }
 
-    @Operation(summary = "회원 상세 조회", description = "ID로 특정 회원의 상세 정보를 조회합니다.")
+    // 실물 만화 카페???? barcode(bookCode) - scan -> 조회 -> 상태 확인
+    // 조회 -> available -> 대여 가능 -> method 를 호출 -> NOT AVAILABLE
+    @Operation(summary = "대여", description = "BookCode 로 대여.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공"),
         @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> getBookById(
-            @Parameter(description = "회원 ID", required = true) @PathVariable Long id) {
-        BookResponse book = bookService.findById(id);
+    @PostMapping
+    public ResponseEntity<RentalResponse> rentalBook(
+            @RequestBody RentalRequest request) {
+        // request 에는 email, bookId, remarks 만 있기 때문에 Rental Entity 에 있는 각종 일시들을 반환해야된다.
+        // data row 를 가공했기때문에, 최종적으로 결과물을 전달해야한다.
+        BookResponse book = rentalService.rental(request);
         return ResponseEntity.ok(book);
     }
 
-    //thread
     @Operation(summary = "회원 등록", description = "새로운 회원을 등록합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "등록 성공"),
@@ -54,7 +56,7 @@ public class BookController {
     public ResponseEntity<Void> createBook(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "책 등록 정보")
             @RequestBody BookRequest request) {
-        bookService.create(request);
+        rentalService.create(request);
         return ResponseEntity.ok().build();
     }
 
@@ -68,7 +70,7 @@ public class BookController {
             @PathVariable Long id,
             @RequestBody BookUpdateRequest request) {
 
-        BookResponse updatedBook = bookService.updateBookStatus(id, request);
+        BookResponse updatedBook = rentalService.updateBookStatus(id, request);
         return ResponseEntity.ok(updatedBook);
     }
 
@@ -81,7 +83,7 @@ public class BookController {
     @PostMapping("/{id}/delete")
     public ResponseEntity<Void> deleteBook(
             @Parameter(description = "회원 ID", required = true) @PathVariable Long id) {
-        bookService.delete(id);
+        rentalService.delete(id);
         return ResponseEntity.ok().build();
     }
 }
